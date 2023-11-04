@@ -21,16 +21,9 @@ export default function Cart({popup}) {
         e.stopPropagation()
         dispatch(showCard(true));
       })
-      // const path = event.path || (event.composedPath && event.composedPath());
-      // console.log(callBtn)
-      // if (cartWindow.current && !path.includes(cartWindow.current)) {
-      //   dispatch(showCard(false));
-      // }
-      // if (closeBtn.current && !path.includes(closeBtn.current)) {
-      //   dispatch(showCard(false));
-      // }
+    
     };
-    document.body.addEventListener('click', handleClick);
+   
 
     return () => document.body.removeEventListener('click', handleClick);
 
@@ -43,7 +36,8 @@ export default function Cart({popup}) {
   }
  
   return (
-    <div className={popup === true ? `${styles.cart} ${styles.cartAbsolut}` : `${styles.cart}`  } ref={cartWindow} >
+    <div className={styles.cartModal} onClick={()=>dispatch(showCard(false))}>
+      <div className={popup === true ? `${styles.cart} ${styles.cartAbsolut}` : `${styles.cart}`  } onClick={e=>e.stopPropagation()} >
       <button className={styles.closeCart} ref={closeBtn} onClick={()=>{ dispatch(showCard(false));}}><img src="/img/close-cart.svg" alt="" /></button>
         <p className={styles.cart_title}>Cart</p>
         <div className={styles.cart_container}>
@@ -54,15 +48,17 @@ export default function Cart({popup}) {
         </div>
         
         </div>
-        <div className={styles.promo}>
+        {/* <div className={styles.promo}>
           <input type="text" placeholder="Enter your promo code" />
           <img src="/img/promo.svg" alt="" />
-        </div>
+        </div> */}
         <div className={styles.total}>
           <span>Total</span>
           <span>{total}$</span>
         </div>
         <button className={styles.makeOrder} onClick={toCheckout} >Make order</button>
     </div>
+    </div>
+    
   )
 }

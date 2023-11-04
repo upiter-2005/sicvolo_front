@@ -77,10 +77,10 @@ $accent: #004E41;
             }
         }
         &_img{
-            width: 244px;
+            width: 200px;
             position: absolute;
-            right: -38px;
-            bottom: -58px;
+            right: -11px;
+            bottom: -10px;
             transition: all .4s ease;
             z-index: 15 ;
         }
@@ -119,6 +119,15 @@ $accent: #004E41;
         position: absolute;
         bottom: 7%;
         left: calc(50% - 600px);
+        z-index: 5;
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+    .home_light_rightImg{
+        position: absolute;
+        top: 192px;
+        right: calc(50% - 600px);
         z-index: 5;
         width: 200px;
         height: 200px;
@@ -246,6 +255,29 @@ $accent: #004E41;
             }
             
         }
+        .inputBox_100{
+            width: 100%;
+            textarea{
+                width: 100%;
+                outline: none;
+                background-color: transparent;
+                border: 1px solid #C3C3C3;
+                padding-bottom: 13px;
+                color: #c3c3c3;
+                font-size: 16px;
+                margin-bottom: 45px;
+                padding: 14px;
+                height: 94px;
+                font-family: 'Gotham';
+                &::placeholder{
+                    font-family: 'Gotham';
+                    font-weight: 400;
+                }
+                &::placeholder{
+                    color: #c3c3c3;
+                }
+            }
+        }
         button{
             background-color: #C3C3C3;
             width: 280px;
@@ -316,11 +348,11 @@ $accent: #004E41;
 @media(max-width: 992px){
    
     .home_light{
-        padding: 0 0 60px;
+        padding: 60px 0 60px;
         .home_light_ring{
-         left: 70px;
+         left: 40px;
          width: 125px;
-         top: 35px;
+         top: 105px;
         }
         .home_light_leftImg{
         position: absolute;
@@ -330,6 +362,15 @@ $accent: #004E41;
         width: 128px;
         height: 120px;
         object-fit: cover;
+        }
+        .home_light_rightImg{
+            position: absolute;
+            top: 26px;
+            right: 20px;
+            z-index: 5;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
         }
         &_inner{
             font-size: 24px;

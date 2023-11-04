@@ -35,9 +35,14 @@ export default function Carousel({images}) {
   return (
     <>
     <ImageGallery 
+    showBullets={true}
+    infinite={false}
+    disableThumbnailSwipe={false}
+    disableSwipe={false}
+    useBrowserFullscreen={false}
     thumbnailPosition="left" 
     showPlayButton={false}
-    slideOnThumbnailOver={true}
+    slideOnThumbnailOver={false}
     items={imgs} />
     </>
   )

@@ -3,10 +3,10 @@ import {v4 as uuidv4} from 'uuid';
 // import axios from "axios";
 
 const  initialState = {
-  items: [],
+  items: JSON.parse(localStorage.getItem('cart')) || [],
   showCardPopup: false,
-  total: 0,
-  
+  total: JSON.parse(localStorage.getItem('total')) || 0,
+  promoSale: 0,
 
   //items: JSON .parse(localStorage.getItem('cart')),
 };
@@ -30,6 +30,9 @@ export const cardSlice = createSlice({
     showCard: (state, action) => {
         state.showCardPopup = action.payload;
     },
+    setPromoSale: (state, action) => {
+        state.promoSale = action.payload;
+    },
     addToCart: (state, action) => {    
         state.items.push({
           ...action.payload,
@@ -38,12 +41,16 @@ export const cardSlice = createSlice({
         state.total = state.items.reduce((sum, obj) => {
           return obj.qty * obj.price + sum;
         }, 0);
+        localStorage.setItem('cart', JSON.stringify(state.items));
+        localStorage.setItem('total', JSON.stringify(state.total));
     },
     removeItem: (state, action) => {
       state.items = state.items.filter((obj) => obj.cartItemId !== action.payload);
       state.total = state.items.reduce((sum, obj) => {
         return obj.qty * obj.price + sum;
       }, 0);
+      localStorage.setItem('cart', JSON.stringify(state.items));
+      localStorage.setItem('total', JSON.stringify(state.total));
     },
     
 
@@ -57,6 +64,8 @@ export const cardSlice = createSlice({
       state.total = state.items.reduce((sum, obj) => {
         return obj.price * obj.qty + sum;
       }, 0);
+      localStorage.setItem('cart', JSON.stringify(state.items));
+      localStorage.setItem('total', JSON.stringify(state.total));
     },
     minusItem: (state, action) => {
       const findItem = state.items.find((obj) => obj.cartItemId === action.payload);
@@ -66,6 +75,8 @@ export const cardSlice = createSlice({
       state.total = state.items.reduce((sum, obj) => {
         return obj.price * obj.qty + sum;
       }, 0);
+      localStorage.setItem('cart', JSON.stringify(state.items));
+      localStorage.setItem('total', JSON.stringify(state.total));
     },
 
     // minusItem: (state, action: PayloadAction<string>) => {
@@ -90,6 +101,6 @@ export const cardSlice = createSlice({
 //export const selectTotalPrice = (state) => state.card.totalPrice;
 // Action creators are generated for each case reducer function
 // export const checkIsAuth = (state) => Boolean(state.auth.showCardPopup);
-export const { showCard, addToCart,removeItem, plusItem, minusItem } = cardSlice.actions;
+export const { showCard, addToCart,removeItem, plusItem, minusItem, setPromoSale } = cardSlice.actions;
 
 export default cardSlice.reducer;

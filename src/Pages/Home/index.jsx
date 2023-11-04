@@ -1,15 +1,29 @@
-import { useState } from "react";
-import {Link} from "react-router-dom"
+import { useState, useEffect } from "react";
+import {Link, useNavigate} from "react-router-dom"
 import Runing from "../../Components/Runing";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ProductCard from "../../Components/ProductCard";
+import {useDispatch, useSelector} from "react-redux";
+import {getFeatureProducts} from "../../redux/slices/productsSlice";
 import styles from "./Home.module.scss";
+import  HomeNavMain from "../../Components/HomeNavMain"
+import axios from "axios";
 
 export default function Home() {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [comment, setComment] = useState('');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const featureItems = useSelector(state=>state.products.featureItems);
   const images = ["../../public/img/sl1.jpeg"];
   const [imageIndex, setImageIndex] = useState(0);
+  const [sliderItems, setSliderItems] = useState([]);
+  const [url, setUrl] = useState('');
+
   const NextArrow = ({ onClick }) => {
     return (
       <div className="arrow next" onClick={onClick}>
@@ -64,9 +78,38 @@ export default function Home() {
     beforeChange: (current, next) => setImageIndex(next),
   };
 
+  useEffect(()=>{
+    dispatch(getFeatureProducts())
+    setUrl(window.location.pathname);
+  }, [])
+ 
+  useEffect(()=>{
+    setSliderItems(featureItems)
+  }, [featureItems])
+
+
+  const contactHandler = async(e) => {
+    e.preventDefault();
+    const params = {name, phone, email, comment};
+    try {
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/mail/sendMail`, params);
+      console.log(data);
+      if(data.status === 200){
+        navigate('/thank');
+      }
+      return data;
+    } catch (e) {
+      console.log(e.message);
+    }
+
+  }
+
+
+
   return (
     <div>
       <div className={styles.mainBanerSlider}>
+      <HomeNavMain /> 
         <Slider {...settings}>
           <div className="slide">
             <img src="img/sl1.jpeg" alt="" />
@@ -89,7 +132,7 @@ export default function Home() {
       <div className={styles.categories_home}>
         <div className="container">
           <div className="row">
-            <div className={styles.item}>
+            <Link to="/catalog/belts" className={styles.item}>
               <img src="img/ring_g.png" alt="" className={styles.greenRing} />
               <img src="img/ring_b.png" alt="" className={styles.blackRing} />
               <img src="img/it1.png" alt="" className={styles.item_img} />
@@ -97,8 +140,8 @@ export default function Home() {
               <Link to="/catalog/belts">
                 Show me <img src="img/carret-r.png" alt="" />
               </Link>
-            </div>
-            <div className={styles.item}>
+            </Link>
+             <Link to="/catalog/rings" className={styles.item}>
               <img src="img/ring_g.png" alt="" className={styles.greenRing} />
               <img src="img/ring_b.png" alt="" className={styles.blackRing} />
               <img src="img/it2.png" alt="" className={styles.item_img} />
@@ -106,8 +149,8 @@ export default function Home() {
               <Link to="/catalog/rings">
                 Show me <img src="img/carret-r.png" alt="" />
               </Link>
-            </div>
-            <div className={styles.item}>
+            </Link>
+            <Link to="/catalog/accessories" className={styles.item}>
               <img src="img/ring_g.png" alt="" className={styles.greenRing} />
               <img src="img/ring_b.png" alt="" className={styles.blackRing} />
               <img src="img/it3.png" alt="" className={styles.item_img} />
@@ -115,7 +158,7 @@ export default function Home() {
               <Link to="/catalog/accessories">
                 Show me <img src="img/carret-r.png" alt="" />
               </Link>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
@@ -123,7 +166,7 @@ export default function Home() {
       <div className={styles.home_light}>
         <img src="img/ring_w.svg" alt="" className={styles.home_light_ring} />
         <img src="img/l1.jpeg" alt="" className={styles.home_light_leftImg} />
-        <img src="img/l2.jpeg" alt="" className={styles.home_light_rightImg} />
+        <img src="img/l2.jpg" alt="" className={styles.home_light_rightImg} />
         <div className={`${styles.light_descr} container`}>
           <div className={styles.home_light_inner}>
             <span>Sic Volo</span> adds elements of art to people's daily lives. Each of our works is
@@ -140,13 +183,8 @@ export default function Home() {
         <h2>New exclusives</h2>
         <div className="newProduct_slider">
           <Slider {...settingsNew}>
-            <ProductCard isCentered={true} />
-            <ProductCard isCentered={true} />
-            <ProductCard isCentered={true} />
-            <ProductCard isCentered={true} />
-            <ProductCard isCentered={true} />
-            <ProductCard isCentered={true} />
-            <ProductCard isCentered={true} />
+            {sliderItems?.map((obj, i)=>  <ProductCard isCentered={true}  name={obj.name} img={obj.images[0]?.src} price={obj.price} link={obj.slug} key={i}  /> )}
+ 
           </Slider>
         </div>
       </div>
@@ -154,16 +192,22 @@ export default function Home() {
       <div className={styles.individual}>
         <h2>Individual design</h2>
         <p>
-          You can choose your belt and buckle combination. Choose from what metal you want the
-          buckle and also place precious stones on the buckle. Anything you wish!
+        Our designers can develop any design and customize any item for you using precious materials. Anything you wish! 
         </p>
-        <form>
+        <form onSubmit={contactHandler}>
           <div>
-            <input type="text" placeholder="Enter your first name" />
+            <input type="text" value={name} name="name" onChange={(e)=>setName(e.target.value)} placeholder="Enter your first name" required/>
           </div>
           <div>
-            <input type="text" placeholder="Enter your mobile phone" />
+            <input type="text" value={phone} name="phone" onChange={(e)=>setPhone(e.target.value)} placeholder="Enter your mobile phone" required/>
           </div>
+         
+          <div className={styles.inputBox_100}>
+          <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email" required />
+          </div>
+          <div className={styles.inputBox_100}>
+                <textarea placeholder="Your question " onChange={(e)=>setComment(e.target.value)} value={comment}></textarea>
+              </div>
           <button type="submit">Send a request</button>
         </form>
         <div className={styles.individual_stripe}>
@@ -183,16 +227,22 @@ export default function Home() {
 
       <div className={styles.cat_stripe}>
         <div style={{ backgroundImage: "url(/img/bg1.jpeg)" }} className={styles.cat_stripe_item}>
-          <a href="#">New exclusives</a>
+          <a href="/catalog/haute-skull-couture">HAUTE SKULL COUTURE</a>
         </div>
         <div style={{ backgroundImage: "url(/img/bg1.jpeg)" }} className={styles.cat_stripe_item}>
-          <a href="#">skulls</a>
+          <a href="/catalog/nautical-treasures">NAUTICAL TREASURES</a>
         </div>
         <div style={{ backgroundImage: "url(/img/bg1.jpeg)" }} className={styles.cat_stripe_item}>
-          <a href="#">FOR HER</a>
+          <a href="/catalog/majestic-wildlife">MAJESTIC WILDLIFE</a>
         </div>
         <div style={{ backgroundImage: "url(/img/bg1.jpeg)" }} className={styles.cat_stripe_item}>
-          <a href="#">FOR HIM</a>
+          <a href="/catalog/blossom-symphony">BLOSSOM SYMPHONY</a>
+        </div>
+        <div style={{ backgroundImage: "url(/img/bg1.jpeg)" }} className={styles.cat_stripe_item}>
+          <a href="/catalog/for-him">FOR HIM</a>
+        </div>
+        <div style={{ backgroundImage: "url(/img/bg1.jpeg)" }} className={styles.cat_stripe_item}>
+          <a href="/catalog/for-her">FOR HER</a>
         </div>
       </div>
 

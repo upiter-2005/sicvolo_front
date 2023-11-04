@@ -33,9 +33,12 @@ const minusQty = () => {
           <img src={img} alt="" className={styles.cart_itemImg} />
           <div className={styles.cart_itemData}>
             <p>{name} </p>
-            {size && ( <div className={styles.cart_itemData_box}>
-              Size <span>{size}</span>
-            </div>)}
+            {(!name.includes('Only buckle') && size !== 0  )? ( <div className={styles.cart_itemData_box}>Size <span>{size}</span>
+            </div>) : ''}
+            {
+              console.log(!name.includes('Only buckle'))
+             
+            }
            
             {/* <div className={styles.cart_itemData_box}>
               Color <span>dark blue</span>

@@ -1,10 +1,32 @@
-import React from "react";
-
+import {useState} from "react";
+import axios from "axios";
 import Runing from "../../Components/Runing";
-
+import { useNavigate } from "react-router-dom";
 import styles from "./Contact.module.scss";
 
 export default function Contact() {
+  const navigate = useNavigate();
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [comment, setComment] = useState('');
+  
+
+  const contactHandler = async(e) => {
+    e.preventDefault();
+    const params = {name, phone, email, comment};
+    try {
+      const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/api/mail/sendMail`, params);
+      console.log(data);
+      if(data.status === 200){
+        navigate('/thank');
+      }
+      return data;
+    } catch (e) {
+      console.log(e.message);
+    }
+
+  }
   return (
     <>
       <div className={styles.contactWrapper}>
@@ -37,24 +59,24 @@ export default function Contact() {
               <div className={styles.contact_item}>
                 <span>E-mail us:</span>
                 <p>
-                  <a href="mailto:info@sicvolo.com">info@sicvolo.com</a>
+                  <a href="mailto:vetolgold@gmail.com">vetolgold@gmail.com</a>
                 </p>
               </div>
             </div>
 
             <p className={styles.contactWrapper_title}>Contact us:</p>
-            <form>
+            <form onSubmit={contactHandler}>
               <div className={styles.input_50}>
-                <input type="text" placeholder="Enter your name" />
+                <input type="text" value={name} onChange={(e)=>setName(e.target.value)} placeholder="Enter your name" required />
               </div>
               <div className={styles.input_50}>
-                <input type="tel" placeholder="Enter your mobile phone" />
+                <input type="tel" value={phone} onChange={(e)=>setPhone(e.target.value)} placeholder="Enter your mobile phone" required />
               </div>
               <div className={styles.input_100}>
-                <input type="email" placeholder="Email" />
+                <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email" required />
               </div>
               <div className={styles.input_100}>
-                <textarea placeholder="Your question "></textarea>
+                <textarea placeholder="Your question " onChange={(e)=>setComment(e.target.value)} value={comment}></textarea>
               </div>
               <div className={styles.submit_wrap}>
                 <button className={styles.submitBtn}>

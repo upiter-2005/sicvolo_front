@@ -29,19 +29,19 @@ export default function NavMain() {
           </Link>
         </li>
         <li>
-          <Link to="/catalog/belts"  className={styles.navLink}>
+          <a href="/catalog/belts"  className={styles.navLink}>
             Belts
-          </Link>
+          </a>
         </li>
         <li>
-        <Link to="/catalog/rings" className={styles.navLink}>
+        <a href="/catalog/rings" className={styles.navLink}>
             Rings
-            </Link>
+            </a>
         </li>
         <li>
-        <Link to="/catalog/accessories" className={styles.navLink}>
+        <a href="/catalog/accessories" className={styles.navLink}>
             Accessories
-            </Link>
+            </a>
         </li>
         <li>
           <Link to="/contact" className={styles.navLink}>

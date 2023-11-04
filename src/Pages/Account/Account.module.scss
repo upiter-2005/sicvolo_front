@@ -27,6 +27,46 @@
     }
     .right{
         width: 894px;
-        
+        padding-bottom: 24px;
+        .back{
+            display: none;
+        }
+    }
+}
+@media(max-width: 768px){
+    .accountWrapper{
+        width: 200%;
+        left: 0;
+        transition: all .3s ease;
+        &.swipe{
+           transform: translate(-50%, 0)!important;
+        }
+        .left, .right{
+            width: 50%;
+            .back{
+                display: block;
+                width: 92%;
+                text-align: left;
+                img{
+                    margin-right: 8px;
+                }
+            }
+        }
+        .right{
+            padding-left: 10px;
+            width: calc(50% - 20px);
+        }
+        .left{
+            button{
+                margin-left: 20px;
+                padding-bottom: 24px;
+                margin-bottom: 24px;
+                border-bottom: 1px solid #fff;
+                width: 90%;
+                &:hover{
+                    opacity: 0.6;
+                }
+            }
+        }
     }
 }

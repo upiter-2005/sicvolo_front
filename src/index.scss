@@ -1,22 +1,26 @@
 @font-face {
-  font-family: "Gotham ";
-  src: local("Gotham"), url("./fonts/Gotham_Pro/gothampro.ttf") format("truetype");
+  font-family: "Gotham";
+  src: local("Gotham"), url("./fonts/Gotham_Pro/GothaPro.ttf") format("truetype"),
+                        url("./fonts/Gotham_Pro/GothaPro.otf") format("otf"),
+                        url("./fonts/Gotham_Pro/GothaPro.woff") format("woff"),
+                        url("./fonts/Gotham_Pro/GothaPro.eot") format("embedded-opentype");
   font-weight: 400;
 }
 @font-face {
-  font-family: "BlackProText ";
-  src: url("./fonts/BlackerProDisplay/BlackerProDisplayTrial-Light.ttf") format("truetype");
+  font-family: "BlackProText";
+  src: url("./fonts/BlackerProText/BlackerProText.ttf") format("truetype");
   src: local("BlackProText"),
-    url("./fonts/BlackerProDisplay/BlackerProDisplayTrial-Light.ttf") format("truetype"),
-    url("./fonts/BlackerProDisplay/BlackerProDisplayTrial-Light.woff") format("woff"),
-    url("./fonts/BlackerProDisplay/BlackerProDisplayTrial-Light.eot") format("eot");
+    url("./fonts/BlackerProText/BlackerProText.ttf") format("truetype"),
+    url("./fonts/BlackerProText/BlackerProText.woff") format("woff"),
+    url("./fonts/BlackerProText/BlackerProText.eot") format("embedded-opentype");
   font-weight: 200;
 }
 @font-face {
-  font-family: "BlackProDisplay ";
+  font-family: "BlackProDisplay";
   src: local("BlackProDisplay"),
-    url("./fonts/BlackerProDisplay/BlackerProDisplayTrial-BoldItalic.ttf") format("truetype"),
-    url("./fonts/BlackerProDisplay/BlackerProDisplayTrial-BoldItalic.eot") format("eot");
+    url("./fonts/BlackerProDisplay/BlackerProDisplay.ttf") format("truetype"),
+    url("./fonts/BlackerProDisplay/BlackerProDisplay.woff") format("woff"),
+    url("./fonts/BlackerProDisplay/BlackerProDisplay.eot") format("embedded-opentype");
   font-weight: 500;
   font-style: italic;
 }
@@ -196,12 +200,86 @@ code {
     }
   }
   .react-select__menu-list{
+    background-color: transparent!important;
+    border-color: transparent!important;
+    outline: none!important;
+    border: none!important;
+  }
+}
+.country-select{
+  margin-bottom: 40px;
+  width: 100%;
+  .react-select__indicator{
+    padding: 5px;
+    top: -6px;
+    position: relative;
+  }
+  .react-select__control{
+    min-height: 33px;
+    cursor: pointer;
     background-color: transparent;
-    border-color: transparent;
+    border: none;
+    border-bottom: 1px solid #F9FFFE;
+    border-radius: 0;
+   
+.react-select__input-container{
+  margin-top: 0;
+}    
+.react-select__value-container{
+ 
+  padding-bottom: 10px;
+  padding-top: 0;
+  padding-left: 0;
+}
+    .react-select__indicator-separator {
+      display: none;
+    }
+    .react-select__single-value{
+      color: #C3C3C3;
+    }
+    .react-select__control--is-focused{
+      outline: none!important;
+      border: none!important;
+      &:hover{
+        border-bottom: 1px solid #F9FFFE;
+      }
+    }
+  }
+  .react-select__menu-list{
+    background-color: transparent!important;
+    border-color: transparent!important;
+    outline: none!important;
+    border: none!important;
   }
 }
 
+#payment{
+  display: none;
+}
+.image-gallery-bullets{
+  display: none!important;
+}
 
 @media(max-width: 992px){
-  
+  .breadcrumbsProduct{
+    padding: 0 20px;
+  }
+  .image-gallery-thumbnails-wrapper.image-gallery-thumbnails-left, .image-gallery-thumbnails-wrapper.image-gallery-thumbnails-right{
+    display: none!important;
+  }
+
+  .image-gallery-slide-wrapper.image-gallery-thumbnails-left, .image-gallery-slide-wrapper.image-gallery-thumbnails-right{
+    width: 100% !important;
+  }
+  .image-gallery-fullscreen-button{
+    display: none!important;
+  }
+  .image-gallery-bullets{
+    display: block!important;
+    bottom: -25px!important;
+  }
+  .image-gallery-bullets .image-gallery-bullet.active{
+    background-color: #004E41!important;
+    border: 1px solid #004E41!important;
+  }
 }

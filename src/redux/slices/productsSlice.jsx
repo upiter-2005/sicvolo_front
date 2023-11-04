@@ -2,12 +2,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 
-
-
 const  initialState = {
   items: [],
   isLoaded: false,
-  currentCat: 1  
+  currentCat: 1 ,
+  featureItems: [],
+  activeCats: [],
+  pageCat: null
   //items: JSON .parse(localStorage.getItem('cart')),
 };
 
@@ -15,6 +16,15 @@ const  initialState = {
 export const getProducts = createAsyncThunk("products/getProducts", async () => {
     try {
       const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/products/getProducts`);
+      console.log(data)
+      return data;
+    } catch (e) {
+      console.log(e.message);
+    }
+  });
+export const getFeatureProducts = createAsyncThunk("products/getFeatureProducts", async () => {
+    try {
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/api/products/getFeatureProducts`);
       console.log(data)
       return data;
     } catch (e) {
@@ -31,8 +41,21 @@ export const productsSlice = createSlice({
     },
     setCurrentCat: (state, action) => {
         state.currentCat = action.payload;
-    }
- 
+    },
+    setActiveCats: (state, action) => {
+        state.activeCats = [];
+    },
+    plusActiveCat: (state, action) => {
+      console.log(action.payload);
+      state.activeCats = [...state.activeCats, parseInt(action.payload.catId) ];
+    },
+    minusActiveCat: (state, action) => {
+      state.activeCats = state.activeCats.filter(obj=> obj !== action.payload.catId);
+    },
+    setPageCat: (state, action) => {
+      state.pageCat = action.payload;
+    },
+
 
     //   state.totalPrice = state.items.reduce((sum, obj) => {
     //     return obj.price * obj.count + sum;
@@ -81,6 +104,14 @@ export const productsSlice = createSlice({
     },
     [getProducts.rejected]: (state, action) => {},
 
+    [getFeatureProducts.pending]: (state) => {
+      state.featureItems = [];
+    },
+    [getFeatureProducts.fulfilled]: (state, action) => {
+      state.featureItems = action.payload;
+    },
+    [getFeatureProducts.rejected]: (state, action) => {},
+
   },
 });
 
@@ -88,6 +119,6 @@ export const productsSlice = createSlice({
 
 //export const selectTotalPrice = (state) => state.card.totalPrice;
 // Action creators are generated for each case reducer function
-export const { showCard, setCurrentCat } = productsSlice.actions;
+export const { showCard, setCurrentCat, plusActiveCat, minusActiveCat, setPageCat, setActiveCats } = productsSlice.actions;
 
 export default productsSlice.reducer;

@@ -4,7 +4,11 @@ import axios from "axios";
 const  initialState = {
   isAuth: false,
   user: null,
-  wasRegistered: false
+  wasRegistered: false,
+  isSwipe: false,
+  addresses: {},
+  mobMnu: false,
+  searchMob: false
   //items: JSON .parse(localStorage.getItem('cart')),
 };
 
@@ -27,15 +31,39 @@ export const userSlice = createSlice({
     },
     setUser: (state, action) => {
         state.user = action.payload;
-        console.log(state.user)
+    },
+    setAditionalDataUser: (state,action) => {
+      console.log(action.payload);
+      state.user = {...state.user, ...action.payload};
     },
     logout: (state, action)=>{
       state.isAuth = null;
       state.user = null;
       localStorage.removeItem("token");
       localStorage.removeItem("userName");
+      localStorage.removeItem("userPhone");
+      localStorage.removeItem("userLastName");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("rememberMe");
       
-    }
+    },
+    setSwipe: (state, action)=>{
+      state.isSwipe = action.payload;
+
+    },
+    setmobMnu: (state, action)=>{
+      state.mobMnu = action.payload;
+
+    },
+    setSearchMob: (state, action)=>{
+      state.searchMob = action.payload;
+
+    },
+    setAddresses: (state, action)=>{
+      state.addresses = action.payload;
+    },
+    
    
   },
   extraReducers: {
@@ -54,6 +82,6 @@ export const userSlice = createSlice({
 
 //export const selectTotalPrice = (state) => state.card.totalPrice;
 // Action creators are generated for each case reducer function
-export const { setAuth, setUser, logout } = userSlice.actions;
+export const { setAuth, setUser, logout, setAditionalDataUser, setSwipe, setAddresses, setmobMnu, setSearchMob } = userSlice.actions;
 
 export default userSlice.reducer;

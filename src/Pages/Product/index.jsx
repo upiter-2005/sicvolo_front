@@ -7,34 +7,47 @@ import {useDispatch, useSelector} from "react-redux";
 import {getProducts} from "../../redux/slices/productsSlice"
 import {addToCart, showCard} from "../../redux/slices/cardSlice"
 import Carousel from "../../Components/Carousel"
+import Runing from "../../Components/Runing"
 import{Link} from "react-router-dom"
+import RingSizeModal from "../../Components/RingSizeModal"
+import BeltSizeModal from "../../Components/BeltSizeModal"
 import Select from 'react-select'
 
 
 const beltSizes = [65,70, 75, 80, 85, 90, 95, 100, 105, 110, 115];
 const optionsRings = [
-    { value: 18.47, label: 18.47},
-    { value: 18.15, label: 18.15 },
-    { value: 18.79, label: 18.79 },
-    { value: 19.11, label: 19.11 },
-    { value: 19.43, label: 19.43 },
-    { value: 19.75, label: 19.75 },
-    { value: 20.06, label: 20.06 },
-    { value: 20.38, label: 20.38 },
-    { value: 20.70, label: 20.70 },
-    { value: 21.02, label: 21.02 },
-    { value: 21.34, label: 21.34 },
-    { value: 21.66, label: 21.66 },
-    { value: 21.97, label: 21.97 },
-    { value: 22.29, label: 22.29 },
-    { value: 22.61, label: 22.61 },
-    { value: 22.93, label: 22.93 },
+    { value: 18.47, label: "18.47 mm"},
+    { value: 18.15, label: "18.15 mm" },
+    { value: 18.79, label: "18.79 mm" },
+    { value: 19.11, label: "19.11 mm" },
+    { value: 19.43, label: "19.43 mm" },
+    { value: 19.75, label: "19.75 mm" },
+    { value: 20.06, label: "20.06 mm" },
+    { value: 20.38, label: "20.38 mm" },
+    { value: 20.70, label: "20.70 mm" },
+    { value: 21.02, label: "21.02 mm" },
+    { value: 21.34, label: "21.34 mm" },
+    { value: 21.66, label: "21.66 mm" },
+    { value: 21.97, label: "21.97 mm" },
+    { value: 22.29, label: "22.29 mm" },
+    { value: 22.61, label: "22.61 mm" },
+    { value: 22.93, label: "22.93 mm" },
   ]
 
 export default function Product() {
     const[product, setProduct] = useState();
+    const[activeRingModal, setActiveRingModal] = useState(false);
+    const[activeBeltModal, setActiveBeltModal] = useState(false);
+    const[visualSizeSku, setVisualSizeSku] = useState("");
+
+
 
     
+    const[sizeError, setSizeError] = useState(null);
+    const[varError, setVarError] = useState(null);
+
+    const[varId, setVarId] = useState(0);
+
     const[cartName, setCartName] = useState('');
     const[cartPrice, setCartPrice] = useState(0);
     const[cartSku, setCartSku] = useState(0);
@@ -56,39 +69,52 @@ const {id} = useParams();
         }
     }, [])
 
-    const switchVariation = (name, price, sku) => {
+    const switchVariation = (name, price, sku, id) => {
         setCartName(name) 
         setCartPrice(price)
         setCartSku(sku)
+        setVarId(id)
     }
 
     const putInCart = () => {
-        if(product?.meta_data[6].value === "belt" && !cartName){alert('Chose variation'); return;}
-        if(product?.meta_data[6].value === "belt" && !cartSize){alert('Chose size'); return;}
+        if(product?.meta_data[6].value === "belt" && !cartName){setVarError('Chose variation'); return;}
+        if(product?.meta_data[6].value === "belt" && !cartSize){
+            if (cartName.includes('Only buckle')){
+                console.log("Only buckle");
+            }else{
+                setSizeError('Chose size'); return;
+            }
+        }
+        //if(product?.meta_data[6].value === "belt" && !cartSize){setSizeError('Chose size'); return;}
+        if(product?.meta_data[6].value === "ring" && !cartSize){setSizeError('Chose size'); return;}
         let item = {};
         if(product?.meta_data[6].value === "ring"){
              item = {
                 
                 id: product.id,
+                url: window.location.href,
                 name: cartName || product.name,
                 price: cartPrice ||  product.price,
-                sku: product.sku,
+                sku: product.sku  + `${cartSize}`,
                 img: product?.images[0].src,
                 size: cartSize,
                 qty: cartQty
                };
         }else{
             item = {
-                id: product.id,
+                id: varId || product.id,
+                url: window.location.href,
                 name: cartName || product.name,
                 price: cartPrice ||  product.price,
-                sku: cartSku + cartSize || product.sku,
+                sku: product.sku || cartSku + `-${cartSize}`,
                 img: product?.images[0].src,
                 size: cartSize,
                 qty: cartQty
                };
         }
-       
+        setSizeError(null);
+        setVarError(null);
+        
        dispatch(addToCart(item));
        dispatch(showCard(true));
     }
@@ -105,6 +131,7 @@ const {id} = useParams();
 
     const find = (event) => {
         setCartSize(event.value)
+        setVisualSizeSku(event.value)
         console.log(event.value)
       }
 
@@ -117,7 +144,7 @@ const {id} = useParams();
         if(product?.variations){
              try {
                  const fetchvariationsromises =  product.variations.map(el =>
-                     axios.post(`http://localhost:5000/api/products/getProductById`, { id: el })
+                     axios.post(`${process.env.REACT_APP_API_URL}/api/products/getProductById`, { id: el })
                  );
                  Promise.all(fetchvariationsromises).then((values) => {
                      setVariations(prev => [...prev, values]);
@@ -132,7 +159,8 @@ const {id} = useParams();
     },[product])
 
     useEffect(()=>{
-        findProduct()
+        findProduct();
+        window.scrollTo(0, 0);
     },[])
 
   return (
@@ -154,7 +182,12 @@ const {id} = useParams();
 
   <div className={styles.productData_top}>
       <h1 className={styles.productData_name}>{cartName || product?.name } </h1>
-      <p className={styles.productData_sku}>{ cartSku || product?.sku}</p>
+
+     {(product?.meta_data[6].value === "belt" || product?.meta_data[6].value === "ring") ? 
+     (<p className={styles.productData_sku}>{product?.sku ?  (`${product?.sku}-${visualSizeSku}`) : (`${cartSku}-${visualSizeSku}`)   }</p>) 
+        : 
+     (<p className={styles.productData_sku}>{ cartSku || product?.sku}</p>)
+     } 
       <div className={styles.productData_price}>$ {cartPrice || product?.price} </div>
 
       <div className={styles.productData_item}>
@@ -178,13 +211,15 @@ const {id} = useParams();
             {variations[0]?.map((obj, i) => (
                 
                 <button 
-                 className={styles.productColor}
-                 onClick={()=>{switchVariation(obj.data.name, obj.data.price, obj.data.sku )}}
+                 title={obj.data.name}
+                 className={obj.data.name === cartName ? `${styles.activeColor} ${styles.productColor}` : `${styles.productColor}`}
+                
+                 onClick={()=>{switchVariation(obj.data.name, obj.data.price, obj.data.sku, obj.data.id )}}
                  key={i}
                   ><img src={obj.data.images[0].src} alt="" /></button>
             )
             )}
-        
+         {varError && (<div className="errorProduct">{varError}</div>) }
      </div>
 
     )}
@@ -192,7 +227,13 @@ const {id} = useParams();
      {product?.meta_data[6].value === "belt" && (
         <div className={styles.productData_attrs}>
         <p className={styles.productAttrSubTitle}>Size</p>
-        {beltSizes.map((el)=> <button className={styles.productSize} onClick={()=>{setCartSize(el)}}>{el}</button>)}
+        {beltSizes.map((el)=> 
+        <button
+                className={el === cartSize ? `${styles.activeSize} ${styles.productSize}` : `${styles.productSize}`}
+                onClick={()=>{setCartSize(el); setVisualSizeSku(el)}}>
+                    {el}
+        </button>)}
+        {sizeError && (<div className="errorProduct">{sizeError}</div>) }
     </div>
      )}
 
@@ -202,34 +243,51 @@ const {id} = useParams();
         <Select options={optionsRings}
          onChange={find}
            className="ring-sizes-select"
+          
            styles={{
             control: (baseStyles, state) => ({
               ...baseStyles,
-              boxShadow: 'none'
+              boxShadow: 'none',
             }),
+            menu: (provided, state) => ({
+                ...provided,
+                border: "none",
+                boxShadow: "none",
+                backgroundColor: "#131313"
+              }),
             option: (provided, state) => ({
                 ...provided,
                 color: "#fff",
                 fontSize: 16,
                 backgroundColor: state.isFocused ? "#333" : "#1a1a1a",
                 cursor: "pointer",
-                borderColor: "transparent"
-              })
+                borderColor: "#333",
+                outline: "none",
+                border: "none"
+
+            })
+
+            
           }}
   classNamePrefix="react-select" />
        {/* {ringsSizes.map((el)=> <button className={styles.productSize} onClick={()=>{setCartSize(el)}}>{el}</button>)} */}
-        
+       {sizeError && (<div className="errorProduct">{sizeError}</div>) }
     </div>
      )}
       
 
-      <a href="#" className={styles.sizeDetermine} alt="">How to determine size</a>
+    {product?.meta_data[6].value === "ring" && (<><a href="#" onClick={()=> setActiveRingModal(true)} className={styles.sizeDetermine} alt="">How to determine size</a> <a href=" https://www.youtube.com/watch?v=LfdPTxCo6_A&ab_channel=wikiHow" target="blank" className={styles.watchYoutube}><img src="/img/youtube_size.svg" alt="" /> Watch video guide</a></>)}
+
+    {product?.meta_data[6].value === "belt" && (<><a href="#" onClick={()=> setActiveBeltModal(true)} className={styles.sizeDetermine} alt="">How to determine size</a> <a href="https://www.youtube.com/watch?v=izXvP07zhro&ab_channel=EngravedGiftIdeas" target="blank" className={styles.watchYoutube}><img src="/img/youtube_size.svg" alt="" /> Watch video guide</a></>)}
+   
 
   <div className={styles.productAddBox}>
       <div className={styles.productQty}>
-          <button className={styles.productQtyPlus} onClick={minusQty}><img src="/img/minusBtn.svg" alt="" /></button>
+          {/* <button className={styles.productQtyPlus} onClick={minusQty}> <img src="/img/minusBtn.svg" alt="" /> </button> */}
+          <button className={styles.productQtyPlus} onClick={minusQty}> - </button>
           <span className={styles.productQtyNum}>{cartQty}</span>
-          <button className={styles.productQtyMinus} onClick={plusQty}><img src="/img/plusBtn.svg" alt="" /></button>
+          {/* <button className={styles.productQtyMinus} onClick={plusQty}><img src="/img/plusBtn.svg" alt="" /></button> */}
+          <button className={styles.productQtyMinus} onClick={plusQty}>+</button>
       </div>
    
     
@@ -242,13 +300,18 @@ const {id} = useParams();
   <div className={styles.productData_descr}>
       <p className={styles.productSubTitle}>Description</p>
       <div className={styles.productData_descr_text}>
-          <p>The "Skull" buckle is a mystical and powerful accessory that embodies deep symbolism and significance of the skull. The skull symbolizes death and rebirth, metamorphosis, and transformation, reminding us of the impermanence of life and the importance of savoring every moment.</p>
-             <p> The "Skull" Ring is also associated with wisdom, resilience, and strength of spirit. Wearing such an accessory can be an expression of courage, individuality, and resistance against societal stereotypes and limitations.</p>
+      <div dangerouslySetInnerHTML={{ __html: product?.description }} />
+         
       </div>
   </div>
 
 </div>
 </div>
+
+<Runing />
+
+<RingSizeModal active={activeRingModal} closeModal={()=>{setActiveRingModal(false)}} /> 
+<BeltSizeModal active={activeBeltModal} closeModal={()=>{setActiveBeltModal(false)}} /> 
     </>
    
   )
